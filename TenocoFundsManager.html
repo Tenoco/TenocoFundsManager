@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tenoco Funds Manager</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: #f8f8f8;
+        margin: 0;
+        padding: 20px;
+        color: #111;
+    }
+    h1 {
+        font-weight: 600;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .card {
+        background: white;
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        margin-bottom: 20px;
+    }
+    label {
+        font-weight: 500;
+        display: block;
+        margin-top: 10px;
+    }
+    input[type="number"] {
+        width: 100%;
+        padding: 10px;
+        border-radius: 12px;
+        border: 1px solid #ccc;
+        margin-top: 5px;
+        font-size: 16px;
+    }
+    button {
+        background: #007aff;
+        color: white;
+        border: none;
+        padding: 14px;
+        border-radius: 14px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        margin-top: 15px;
+    }
+    button:hover {
+        background: #0063cc;
+    }
+    .reset-btn {
+        background: #ff3b30;
+        margin-top: 10px;
+    }
+    .reset-btn:hover {
+        background: #cc2b23;
+    }
+    .result {
+        margin-top: 15px;
+        font-size: 16px;
+        background: #f1f1f1;
+        padding: 12px;
+        border-radius: 12px;
+    }
+    .account {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 10px;
+        border-radius: 8px;
+        margin-top: 5px;
+        color: white;
+        font-weight: 500;
+    }
+    .copy-btn {
+        background: rgba(255,255,255,0.3);
+        color: white;
+        border: none;
+        padding: 5px 8px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 12px;
+    }
+    .copy-btn:hover {
+        background: rgba(255,255,255,0.5);
+    }
+    .warning {
+        color: red;
+        font-weight: 500;
+        margin-top: 8px;
+    }
+    canvas {
+        margin-top: 20px;
+    }
+</style>
+</head>
+<body>
+
+<h1>Tenoco Funds Manager</h1>
+
+<div class="card">
+    <label for="income">Income (₦)</label>
+    <input type="number" id="income" placeholder="Enter your income">
+
+    <label>Personal (%)</label>
+    <input type="number" id="personal" value="50">
+
+    <label>Reserve (%)</label>
+    <input type="number" id="reserve" value="20">
+
+    <label>Growth (%)</label>
+    <input type="number" id="growth" value="20">
+
+    <label>Goal (%)</label>
+    <input type="number" id="goal" value="10">
+
+    <div id="warning" class="warning"></div>
+
+    <button onclick="calculate()">Calculate</button>
+    <button class="reset-btn" onclick="resetDefaults()">Reset to Default Percentages</button>
+
+    <div id="results" class="result" style="display:none;"></div>
+
+    <canvas id="bucketChart" width="400" height="400" style="display:none;"></canvas>
+</div>
+
+<script>
+const defaultPercentages = { personal: 50, reserve: 20, growth: 20, goal: 10 };
+let chartInstance = null;
+
+// Bank colors
+const bankColors = {
+    personal: "#37B44E", // Opay green
+    reserve: "#0050A4",  // Moniepoint blue
+    growth: "#7F3DFF",   // Palmpay purple (brand color)
+    goal: "#6A0DAD"      // Kuda purple
+};
+
+// Account numbers
+const accounts = {
+    personal: "8076556252 (Opay)",
+    reserve: "8065971889 (Moniepoint)",
+    growth: "9017352138 (Palmpay)",
+    goal: "Kuda (Your account number)"
+};
+
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text);
+    alert("Copied: " + text);
+}
+
+// Load saved values
+window.onload = function() {
+    ["income", "personal", "reserve", "growth", "goal"].forEach(id => {
+        const saved = localStorage.getItem(id);
+        if (saved) document.getElementById(id).value = saved;
+    });
+};
+
+function calculate() {
+    const income = parseFloat(document.getElementById('income').value);
+    const personalPct = parseFloat(document.getElementById('personal').value);
+    const reservePct = parseFloat(document.getElementById('reserve').value);
+    const growthPct = parseFloat(document.getElementById('growth').value);
+    const goalPct = parseFloat(document.getElementById('goal').value);
+
+    const totalPct = personalPct + reservePct + growthPct + goalPct;
+    const warningEl = document.getElementById('warning');
+
+    if (isNaN(income) || income <= 0) {
+        warningEl.textContent = "Please enter a valid income.";
+        return;
+    }
+
+    if (totalPct !== 100) {
+        warningEl.textContent = "Percentages must add up to 100%.";
+        return;
+    } else {
+        warningEl.textContent = "";
+    }
+
+    ["income", "personal", "reserve", "growth", "goal"].forEach(id => {
+        localStorage.setItem(id, document.getElementById(id).value);
+    });
+
+    const personalAmt = (income * personalPct / 100);
+    const reserveAmt = (income * reservePct / 100);
+    const growthAmt = (income * growthPct / 100);
+    const goalAmt = (income * goalPct / 100);
+
+    document.getElementById('results').style.display = "block";
+    document.getElementById('results').innerHTML = `
+        ${renderAccount("Personal", accounts.personal, personalAmt, bankColors.personal)}
+        ${renderAccount("Reserve", accounts.reserve, reserveAmt, bankColors.reserve)}
+        ${renderAccount("Growth", accounts.growth, growthAmt, bankColors.growth)}
+        ${renderAccount("Goal", accounts.goal, goalAmt, bankColors.goal)}
+    `;
+
+    drawChart(
+        [personalAmt, reserveAmt, growthAmt, goalAmt],
+        ["Personal", "Reserve", "Growth", "Goal"]
+    );
+}
+
+function renderAccount(name, acc, amount, color) {
+    return `
+        <div class="account" style="background:${color}">
+            <div>
+                <strong>${name}:</strong> ₦${amount.toLocaleString()}<br>
+                <small>${acc}</small>
+            </div>
+            <button class="copy-btn" onclick="copyToClipboard('${acc}')">Copy</button>
+        </div>
+    `;
+}
+
+function resetDefaults() {
+    document.getElementById('personal').value = defaultPercentages.personal;
+    document.getElementById('reserve').value = defaultPercentages.reserve;
+    document.getElementById('growth').value = defaultPercentages.growth;
+    document.getElementById('goal').value = defaultPercentages.goal;
+}
+
+function drawChart(values, labels) {
+    const ctx = document.getElementById('bucketChart').getContext('2d');
+    document.getElementById('bucketChart').style.display = "block";
+
+    if (chartInstance) {
+        chartInstance.destroy();
+    }
+
+    chartInstance = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: values,
+                backgroundColor: [
+                    bankColors.personal,
+                    bankColors.reserve,
+                    bankColors.growth,
+                    bankColors.goal
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+}
+</script>
+
+</body>
+</html>
