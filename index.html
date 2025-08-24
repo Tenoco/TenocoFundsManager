@@ -3,164 +3,406 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tenoco Funds Manager</title>
+<title>Tenoco Funds Manager - Royal Edition</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600;700&display=swap');
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
 
     body {
-        font-family: 'Inter', sans-serif;
-        background-color: #f8f8f8;
-        margin: 0;
+        font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: linear-gradient(135deg, #2D1B69 0%, #1A0B3D 50%, #0F051E 100%);
+        min-height: 100vh;
+        color: #FFFFFF;
         padding: 20px;
-        color: #111;
+        position: relative;
+        overflow-x: hidden;
     }
+
+    body::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 20% 30%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 70%, rgba(255, 215, 0, 0.08) 0%, transparent 50%),
+            radial-gradient(circle at 50% 50%, rgba(138, 43, 226, 0.1) 0%, transparent 50%);
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    .container {
+        max-width: 400px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+    }
+
     h1 {
-        font-weight: 600;
+        font-weight: 700;
+        font-size: 32px;
         text-align: center;
-        margin-bottom: 20px;
+        margin-bottom: 30px;
+        background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
     }
+
     .card {
-        background: white;
-        border-radius: 20px;
-        padding: 20px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 215, 0, 0.2);
+        border-radius: 24px;
+        padding: 28px;
+        margin-bottom: 20px;
+        box-shadow: 
+            0 8px 32px rgba(0, 0, 0, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        position: relative;
+    }
+
+    .card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.4), transparent);
+        border-radius: 24px 24px 0 0;
+    }
+
+    .input-group {
         margin-bottom: 20px;
     }
+
     label {
-        font-weight: 500;
+        font-weight: 600;
+        font-size: 16px;
+        color: #FFD700;
         display: block;
-        margin-top: 10px;
+        margin-bottom: 8px;
+        text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
     }
+
     input[type="number"] {
         width: 100%;
-        padding: 10px;
-        border-radius: 12px;
-        border: 1px solid #ccc;
-        margin-top: 5px;
-        font-size: 16px;
+        padding: 16px 20px;
+        border-radius: 16px;
+        border: 1px solid rgba(255, 215, 0, 0.3);
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        color: #FFFFFF;
+        font-size: 17px;
+        font-weight: 500;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        outline: none;
     }
+
+    input[type="number"]:focus {
+        border-color: #FFD700;
+        background: rgba(255, 255, 255, 0.08);
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
+        transform: translateY(-1px);
+    }
+
+    input[type="number"]::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+
     button {
-        background: #007aff;
-        color: white;
+        background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+        color: #1A0B3D;
         border: none;
-        padding: 14px;
-        border-radius: 14px;
-        font-size: 16px;
+        padding: 16px 24px;
+        border-radius: 16px;
+        font-size: 17px;
         font-weight: 600;
         cursor: pointer;
         width: 100%;
-        margin-top: 15px;
+        margin-top: 8px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 
+            0 4px 16px rgba(255, 215, 0, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        position: relative;
+        overflow: hidden;
     }
+
     button:hover {
-        background: #0063cc;
+        transform: translateY(-2px);
+        box-shadow: 
+            0 8px 24px rgba(255, 215, 0, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
     }
+
+    button:active {
+        transform: translateY(0);
+    }
+
     .reset-btn {
-        background: #ff3b30;
-        margin-top: 10px;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+        color: #FFD700;
+        border: 1px solid rgba(255, 215, 0, 0.3);
+        margin-top: 12px;
     }
+
     .reset-btn:hover {
-        background: #cc2b23;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%);
+        border-color: #FFD700;
     }
+
     .result {
-        margin-top: 15px;
-        font-size: 16px;
-        background: #f1f1f1;
-        padding: 12px;
-        border-radius: 12px;
+        margin-top: 20px;
+        display: none;
     }
+
     .account {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 8px 10px;
-        border-radius: 8px;
-        margin-top: 5px;
-        color: white;
+        padding: 18px 20px;
+        border-radius: 16px;
+        margin-bottom: 12px;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .account::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+        transition: left 0.5s;
+    }
+
+    .account:hover::before {
+        left: 100%;
+    }
+
+    .account:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    .account-info {
+        flex: 1;
+    }
+
+    .account-name {
+        font-weight: 700;
+        font-size: 18px;
+        margin-bottom: 4px;
+        color: #FFD700;
+    }
+
+    .account-amount {
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 6px;
+        color: #FFFFFF;
+    }
+
+    .account-details {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.7);
         font-weight: 500;
     }
+
     .copy-btn {
-        background: rgba(255,255,255,0.3);
-        color: white;
-        border: none;
-        padding: 5px 8px;
-        border-radius: 6px;
+        background: rgba(255, 215, 0, 0.15);
+        color: #FFD700;
+        border: 1px solid rgba(255, 215, 0, 0.3);
+        padding: 8px 16px;
+        border-radius: 12px;
         cursor: pointer;
-        font-size: 12px;
+        font-size: 14px;
+        font-weight: 600;
+        transition: all 0.2s;
+        margin: 0;
+        width: auto;
+        backdrop-filter: blur(5px);
     }
+
     .copy-btn:hover {
-        background: rgba(255,255,255,0.5);
+        background: rgba(255, 215, 0, 0.25);
+        border-color: #FFD700;
+        transform: translateY(-1px);
     }
+
     .warning {
-        color: red;
-        font-weight: 500;
-        margin-top: 8px;
+        color: #FF6B6B;
+        font-weight: 600;
+        margin-top: 12px;
+        padding: 12px 16px;
+        background: rgba(255, 107, 107, 0.1);
+        border-radius: 12px;
+        border: 1px solid rgba(255, 107, 107, 0.2);
+        font-size: 15px;
     }
+
+    .chart-container {
+        display: none !important;
+    }
+
     canvas {
-        margin-top: 20px;
+        display: none !important;
+    }
+
+    /* Bank-specific colors with royal theme */
+    .personal { background: linear-gradient(135deg, #37B44E, #2D8F3F); }
+    .reserve { background: linear-gradient(135deg, #0050A4, #003D82); }
+    .goal { background: linear-gradient(135deg, #8A2BE2, #6A1B9A); }
+
+    /* Smooth animations */
+    @keyframes shimmer {
+        0% { background-position: -200% 0; }
+        100% { background-position: 200% 0; }
+    }
+
+    .loading {
+        background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+        background-size: 200% 100%;
+        animation: shimmer 1.5s infinite;
+    }
+
+    /* Responsive design */
+    @media (max-width: 480px) {
+        .container {
+            padding: 0 10px;
+        }
+        
+        h1 {
+            font-size: 28px;
+        }
+        
+        .card {
+            padding: 20px;
+        }
+    }
+
+    /* Success animation */
+    @keyframes successPulse {
+        0% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4); }
+        70% { box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0); }
+    }
+
+    .success-animation {
+        animation: successPulse 0.6s ease-out;
     }
 </style>
 </head>
 <body>
 
-<h1>Tenoco Funds Manager</h1>
+<div class="container">
+    <h1>👑 Tenoco Funds Manager</h1>
 
-<div class="card">
-    <label for="income">Income (₦)</label>
-    <input type="number" id="income" placeholder="Enter your income">
+    <div class="card">
+        <div class="input-group">
+            <label for="income">💰 Income (₦)</label>
+            <input type="number" id="income" placeholder="Enter your income">
+        </div>
 
-    <label>Personal (%)</label>
-    <input type="number" id="personal" value="50">
+        <div class="input-group">
+            <label>🏠 Personal (%)</label>
+            <input type="number" id="personal" value="50">
+        </div>
 
-    <label>Reserve (%)</label>
-    <input type="number" id="reserve" value="20">
+        <div class="input-group">
+            <label>🛡️ Reserve (%)</label>
+            <input type="number" id="reserve" value="20">
+        </div>
 
-    <label>Growth (%)</label>
-    <input type="number" id="growth" value="20">
+        <div class="input-group">
+            <label>🎯 Goal (%)</label>
+            <input type="number" id="goal" value="30">
+        </div>
 
-    <label>Goal (%)</label>
-    <input type="number" id="goal" value="10">
+        <div id="warning" class="warning" style="display: none;"></div>
 
-    <div id="warning" class="warning"></div>
+        <button onclick="calculate()">✨ Calculate Allocation</button>
+        <button class="reset-btn" onclick="resetDefaults()">🔄 Reset to Default</button>
 
-    <button onclick="calculate()">Calculate</button>
-    <button class="reset-btn" onclick="resetDefaults()">Reset to Default Percentages</button>
+        <div id="results" class="result"></div>
 
-    <div id="results" class="result" style="display:none;"></div>
 
-    <canvas id="bucketChart" width="400" height="400" style="display:none;"></canvas>
+    </div>
 </div>
 
 <script>
-const defaultPercentages = { personal: 50, reserve: 20, growth: 20, goal: 10 };
+const defaultPercentages = { personal: 50, reserve: 20, goal: 30 };
 let chartInstance = null;
 
-// Bank colors
-const bankColors = {
-    personal: "#37B44E", // Opay green
-    reserve: "#0050A4",  // Moniepoint blue
-    growth: "#7F3DFF",   // Palmpay purple (brand color)
-    goal: "#6A0DAD"      // Kuda purple
+// Royal bank colors for chart
+const chartColors = {
+    personal: "#37B44E",
+    reserve: "#0050A4", 
+    goal: "#8A2BE2"
 };
 
-// Account numbers
+// Account numbers (removed growth account)
 const accounts = {
     personal: "8076556252 (Opay)",
     reserve: "8065971889 (Moniepoint)",
-    growth: "9017352138 (Palmpay)",
     goal: "2080286439 (Kuda)"
 };
 
-function copyToClipboard(text) {
-    navigator.clipboard.writeText(text);
-    alert("Copied: " + text);
+function copyToClipboard(text, button) {
+    navigator.clipboard.writeText(text).then(() => {
+        const originalText = button.textContent;
+        button.textContent = '✓ Copied';
+        button.style.background = 'rgba(34, 197, 94, 0.2)';
+        button.style.color = '#22C55E';
+        button.style.borderColor = '#22C55E';
+        
+        setTimeout(() => {
+            button.textContent = originalText;
+            button.style.background = 'rgba(255, 215, 0, 0.15)';
+            button.style.color = '#FFD700';
+            button.style.borderColor = 'rgba(255, 215, 0, 0.3)';
+        }, 1500);
+    });
 }
 
-// Load saved values
+// Load saved values on page load
 window.onload = function() {
-    ["income", "personal", "reserve", "growth", "goal"].forEach(id => {
-        const saved = localStorage.getItem(id);
-        if (saved) document.getElementById(id).value = saved;
+    const fields = ["income", "personal", "reserve", "goal"];
+    fields.forEach(id => {
+        const saved = localStorage.getItem(`tenoco_${id}`);
+        if (saved) {
+            document.getElementById(id).value = saved;
+        }
+    });
+    
+    // Add input animations
+    const inputs = document.querySelectorAll('input[type="number"]');
+    inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            this.parentElement.style.transform = 'translateY(-2px)';
+        });
+        
+        input.addEventListener('blur', function() {
+            this.parentElement.style.transform = 'translateY(0)';
+        });
     });
 };
 
@@ -168,95 +410,187 @@ function calculate() {
     const income = parseFloat(document.getElementById('income').value);
     const personalPct = parseFloat(document.getElementById('personal').value);
     const reservePct = parseFloat(document.getElementById('reserve').value);
-    const growthPct = parseFloat(document.getElementById('growth').value);
     const goalPct = parseFloat(document.getElementById('goal').value);
 
-    const totalPct = personalPct + reservePct + growthPct + goalPct;
+    const totalPct = personalPct + reservePct + goalPct;
     const warningEl = document.getElementById('warning');
 
+    // Clear previous warnings
+    warningEl.style.display = 'none';
+
     if (isNaN(income) || income <= 0) {
-        warningEl.textContent = "Please enter a valid income.";
+        showWarning("⚠️ Please enter a valid income amount.");
         return;
     }
 
     if (totalPct !== 100) {
-        warningEl.textContent = "Percentages must add up to 100%.";
+        showWarning(`⚠️ Percentages must add up to 100%. Current total: ${totalPct}%`);
         return;
-    } else {
-        warningEl.textContent = "";
     }
 
-    ["income", "personal", "reserve", "growth", "goal"].forEach(id => {
-        localStorage.setItem(id, document.getElementById(id).value);
+    // Save values to localStorage
+    const fields = ["income", "personal", "reserve", "goal"];
+    fields.forEach(id => {
+        localStorage.setItem(`tenoco_${id}`, document.getElementById(id).value);
     });
 
+    // Calculate amounts
     const personalAmt = (income * personalPct / 100);
     const reserveAmt = (income * reservePct / 100);
-    const growthAmt = (income * growthPct / 100);
     const goalAmt = (income * goalPct / 100);
 
-    document.getElementById('results').style.display = "block";
-    document.getElementById('results').innerHTML = `
-        ${renderAccount("Personal", accounts.personal, personalAmt, bankColors.personal)}
-        ${renderAccount("Reserve", accounts.reserve, reserveAmt, bankColors.reserve)}
-        ${renderAccount("Growth", accounts.growth, growthAmt, bankColors.growth)}
-        ${renderAccount("Goal", accounts.goal, goalAmt, bankColors.goal)}
+    // Show results with animation
+    const resultsEl = document.getElementById('results');
+    resultsEl.style.display = "block";
+    resultsEl.innerHTML = `
+        ${renderAccount("Personal", "🏠", accounts.personal, personalAmt, "personal")}
+        ${renderAccount("Reserve", "🛡️", accounts.reserve, reserveAmt, "reserve")}
+        ${renderAccount("Goal", "🎯", accounts.goal, goalAmt, "goal")}
     `;
 
-    drawChart(
-        [personalAmt, reserveAmt, growthAmt, goalAmt],
-        ["Personal", "Reserve", "Growth", "Goal"]
-    );
+    // Add success animation to card
+    document.querySelector('.card').classList.add('success-animation');
+    setTimeout(() => {
+        document.querySelector('.card').classList.remove('success-animation');
+    }, 600);
 }
 
-function renderAccount(name, acc, amount, color) {
+function showWarning(message) {
+    const warningEl = document.getElementById('warning');
+    warningEl.textContent = message;
+    warningEl.style.display = 'block';
+    
+    // Smooth scroll to warning
+    warningEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function renderAccount(name, emoji, accountDetails, amount, className) {
+    const accountNumber = accountDetails.split(' ')[0];
+    const bank = accountDetails.split('(')[1]?.replace(')', '') || '';
+    
     return `
-        <div class="account" style="background:${color}">
-            <div>
-                <strong>${name}:</strong> ₦${amount.toLocaleString()}<br>
-                <small>${acc}</small>
+        <div class="account ${className}">
+            <div class="account-info">
+                <div class="account-name">${emoji} ${name}</div>
+                <div class="account-amount">₦${amount.toLocaleString()}</div>
+                <div class="account-details">${accountNumber} • ${bank}</div>
             </div>
-            <button class="copy-btn" onclick="copyToClipboard('${acc}')">Copy</button>
+            <button class="copy-btn" onclick="copyToClipboard('${accountNumber}', this)">Copy</button>
         </div>
     `;
 }
 
 function resetDefaults() {
-    document.getElementById('personal').value = defaultPercentages.personal;
-    document.getElementById('reserve').value = defaultPercentages.reserve;
-    document.getElementById('growth').value = defaultPercentages.growth;
-    document.getElementById('goal').value = defaultPercentages.goal;
+    Object.keys(defaultPercentages).forEach(key => {
+        document.getElementById(key).value = defaultPercentages[key];
+    });
+    
+    // Clear income field
+    document.getElementById('income').value = '';
+    
+    // Hide results and clear warnings
+    document.getElementById('results').style.display = 'none';
+    document.getElementById('warning').style.display = 'none';
+    
+    // Clear localStorage
+    const fields = ["income", "personal", "reserve", "goal"];
+    fields.forEach(id => {
+        localStorage.removeItem(`tenoco_${id}`);
+    });
+    
+    // Add reset animation
+    const inputs = document.querySelectorAll('input[type="number"]');
+    inputs.forEach((input, index) => {
+        setTimeout(() => {
+            input.style.transform = 'scale(1.05)';
+            setTimeout(() => {
+                input.style.transform = 'scale(1)';
+            }, 150);
+        }, index * 50);
+    });
 }
 
 function drawChart(values, labels) {
     const ctx = document.getElementById('bucketChart').getContext('2d');
-    document.getElementById('bucketChart').style.display = "block";
+    const chartContainer = document.getElementById('chartContainer');
+    chartContainer.style.display = "block";
 
     if (chartInstance) {
         chartInstance.destroy();
     }
 
     chartInstance = new Chart(ctx, {
-        type: 'pie',
+        type: 'doughnut',
         data: {
             labels: labels,
             datasets: [{
                 data: values,
                 backgroundColor: [
-                    bankColors.personal,
-                    bankColors.reserve,
-                    bankColors.growth,
-                    bankColors.goal
-                ]
+                    chartColors.personal,
+                    chartColors.reserve,
+                    chartColors.goal
+                ],
+                borderWidth: 3,
+                borderColor: 'rgba(255, 215, 0, 0.3)',
+                hoverBorderWidth: 4,
+                hoverBorderColor: '#FFD700'
             }]
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
+            cutout: '60%',
             plugins: {
-                legend: { position: 'bottom' }
+                legend: { 
+                    position: 'bottom',
+                    labels: {
+                        color: '#FFFFFF',
+                        font: {
+                            family: 'SF Pro Display',
+                            size: 14,
+                            weight: '600'
+                        },
+                        padding: 20,
+                        usePointStyle: true,
+                        pointStyle: 'circle'
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleColor: '#FFD700',
+                    bodyColor: '#FFFFFF',
+                    borderColor: '#FFD700',
+                    borderWidth: 1,
+                    cornerRadius: 12,
+                    displayColors: true,
+                    callbacks: {
+                        label: function(context) {
+                            const percentage = ((context.raw / values.reduce((a, b) => a + b, 0)) * 100).toFixed(1);
+                            return `${context.label}: ₦${context.raw.toLocaleString()} (${percentage}%)`;
+                        }
+                    }
+                }
+            },
+            animation: {
+                animateRotate: true,
+                animateScale: true,
+                duration: 1000,
+                easing: 'easeOutCubic'
+            },
+            hover: {
+                animationDuration: 200
             }
         }
     });
+
+    // Animate chart container
+    chartContainer.style.opacity = '0';
+    chartContainer.style.transform = 'translateY(20px)';
+    setTimeout(() => {
+        chartContainer.style.transition = 'all 0.5s ease';
+        chartContainer.style.opacity = '1';
+        chartContainer.style.transform = 'translateY(0)';
+    }, 100);
 }
 </script>
 
