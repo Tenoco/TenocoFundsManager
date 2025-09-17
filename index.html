@@ -271,6 +271,7 @@
     .personal { background: linear-gradient(135deg, #37B44E, #2D8F3F); }
     .reserve { background: linear-gradient(135deg, #0050A4, #003D82); }
     .goal { background: linear-gradient(135deg, #8A2BE2, #6A1B9A); }
+    .emergency { background: linear-gradient(135deg, #9C27B0, #7B1FA2); }
 
     /* Smooth animations */
     @keyframes shimmer {
@@ -334,7 +335,12 @@
 
         <div class="input-group">
             <label>🎯 Goal (%)</label>
-            <input type="number" id="goal" value="30">
+            <input type="number" id="goal" value="20">
+        </div>
+
+        <div class="input-group">
+            <label>🚨 Emergency (%)</label>
+            <input type="number" id="emergency" value="10">
         </div>
 
         <div id="warning" class="warning" style="display: none;"></div>
@@ -344,26 +350,27 @@
 
         <div id="results" class="result"></div>
 
-
     </div>
 </div>
 
 <script>
-const defaultPercentages = { personal: 50, reserve: 20, goal: 30 };
+const defaultPercentages = { personal: 50, reserve: 20, goal: 20, emergency: 10 };
 let chartInstance = null;
 
 // Royal bank colors for chart
 const chartColors = {
     personal: "#37B44E",
     reserve: "#0050A4", 
-    goal: "#8A2BE2"
+    goal: "#8A2BE2",
+    emergency: "#9C27B0"
 };
 
 // Account numbers (removed growth account)
 const accounts = {
     personal: "8076556252 (Opay)",
     reserve: "8065971889 (Moniepoint)",
-    goal: "2080286439 (Kuda)"
+    goal: "2080286439 (Kuda)",
+    emergency: "8141515928 (Palmpay)"
 };
 
 function copyToClipboard(text, button) {
@@ -385,7 +392,7 @@ function copyToClipboard(text, button) {
 
 // Load saved values on page load
 window.onload = function() {
-    const fields = ["income", "personal", "reserve", "goal"];
+    const fields = ["income", "personal", "reserve", "goal", "emergency"];
     fields.forEach(id => {
         const saved = localStorage.getItem(`tenoco_${id}`);
         if (saved) {
@@ -411,8 +418,9 @@ function calculate() {
     const personalPct = parseFloat(document.getElementById('personal').value);
     const reservePct = parseFloat(document.getElementById('reserve').value);
     const goalPct = parseFloat(document.getElementById('goal').value);
+    const emergencyPct = parseFloat(document.getElementById('emergency').value);
 
-    const totalPct = personalPct + reservePct + goalPct;
+    const totalPct = personalPct + reservePct + goalPct + emergencyPct;
     const warningEl = document.getElementById('warning');
 
     // Clear previous warnings
@@ -429,7 +437,7 @@ function calculate() {
     }
 
     // Save values to localStorage
-    const fields = ["income", "personal", "reserve", "goal"];
+    const fields = ["income", "personal", "reserve", "goal", "emergency"];
     fields.forEach(id => {
         localStorage.setItem(`tenoco_${id}`, document.getElementById(id).value);
     });
@@ -438,6 +446,7 @@ function calculate() {
     const personalAmt = (income * personalPct / 100);
     const reserveAmt = (income * reservePct / 100);
     const goalAmt = (income * goalPct / 100);
+    const emergencyAmt = (income * emergencyPct / 100);
 
     // Show results with animation
     const resultsEl = document.getElementById('results');
@@ -446,6 +455,7 @@ function calculate() {
         ${renderAccount("Personal", "🏠", accounts.personal, personalAmt, "personal")}
         ${renderAccount("Reserve", "🛡️", accounts.reserve, reserveAmt, "reserve")}
         ${renderAccount("Goal", "🎯", accounts.goal, goalAmt, "goal")}
+        ${renderAccount("Emergency", "🚨", accounts.emergency, emergencyAmt, "emergency")}
     `;
 
     // Add success animation to card
@@ -493,7 +503,7 @@ function resetDefaults() {
     document.getElementById('warning').style.display = 'none';
     
     // Clear localStorage
-    const fields = ["income", "personal", "reserve", "goal"];
+    const fields = ["income", "personal", "reserve", "goal", "emergency"];
     fields.forEach(id => {
         localStorage.removeItem(`tenoco_${id}`);
     });
@@ -528,7 +538,8 @@ function drawChart(values, labels) {
                 backgroundColor: [
                     chartColors.personal,
                     chartColors.reserve,
-                    chartColors.goal
+                    chartColors.goal,
+                    chartColors.emergency
                 ],
                 borderWidth: 3,
                 borderColor: 'rgba(255, 215, 0, 0.3)',
